@@ -57,26 +57,21 @@ void ParallelPIDSettings::setIdealCoefficients(double _K, double _Ti, double _Td
 }
 
 PID::PID():
-initialized(false),
-prevValue(0),
-prevError(0),
-Bi(0),
-Ad(0),
-Bd(0),
-Ao(0),
-P(0),
-I(0),
-D(0),
-rawCommand(0),
-saturatedCommand(0),
-bIntegral(false),
-bDerivative(false),
-bDerivativeFiltering(false),
-derivativeMode(Output),
-Kold(0),Bold(0),
-firstRun(true),
-bSaturated(false)
+
+initialized(false),prevValue(0),prevError(0),Bi(0),Ad(0),Bd(0),Ao(0),P(0),
+I(0),D(0),rawCommand(0),saturatedCommand(0),bIntegral(false),
+bDerivative(false),bDerivativeFiltering(false),Kold(0),Bold(0),
+firstRun(true),bSaturated(false),derivativeMode(Output), fullReset(true)
 { 
+};
+
+PID::PID(bool _fullReset):
+initialized(false),prevValue(0),prevError(0),Bi(0),Ad(0),Bd(0),Ao(0),P(0),
+I(0),D(0),rawCommand(0),saturatedCommand(0),bIntegral(false),
+bDerivative(false),bDerivativeFiltering(false),Kold(0),Bold(0),
+firstRun(true),bSaturated(false),derivativeMode(Output)
+{ 
+    fullReset = _fullReset;
 };
 
 void PID::setParallelPIDSettings(const ParallelPIDSettings &_settings){
@@ -225,8 +220,15 @@ PID::computeCoefficients()
 	    Bd = gains.K*gains.Td/gains.Ts; //derivative gain
 	}
     }
-
-    reset();
+    
+    if(fullReset)
+    {
+        reset();
+    }
+    else
+    {
+        partcielReset(bIntegral, bDerivative);
+    }
     initialized = true;
 }
     
@@ -309,6 +311,19 @@ PID::reset()
     firstRun = true;
     P = I = D = 0.0;
     saturatedCommand = rawCommand = 0.0;
+}
+
+	void
+PID::partcielReset(bool resetI, bool resetD)
+{
+    if(resetI)
+    {
+        I = 0.0;
+    }
+    if (resetD)
+    {
+        D = 0.0;
+    }
 }
 
 	void 

@@ -233,6 +233,10 @@ namespace motor_controller
 	public:
 		//! Constructor
 	    PID();
+                
+                //! Constructor
+                //param fullReset if false, reseting only params, that are not used, if new Coeficients will setted
+            PID(bool _fullReset);
 
 	    //! Sets the coefficients for a 'PARALLEL' type PID
 		/**
@@ -294,7 +298,10 @@ namespace motor_controller
 	    //! Resets the controller
 	    void reset();
 
-	    //! Prints the controller coefficients
+	    //! Resets I or D if the param is true (no other value will resetted)
+	    void partcielReset(bool resetI, bool resetD);
+	    
+            //! Prints the controller coefficients
 	    void printCoefficients();
 
 
@@ -352,6 +359,9 @@ namespace motor_controller
         PIDState getState() const;
 
 	private:
+
+            //!true if the Controller will be resetet if new Coeficients are setted
+            bool fullReset;
 
 		//! PID gains 
 		struct PIDSettings gains;
