@@ -227,7 +227,7 @@ PID::computeCoefficients()
     }
     else
     {
-        partcielReset(bIntegral, bDerivative);
+        partcielReset(!bIntegral, !bDerivative);
     }
     initialized = true;
 }
